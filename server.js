@@ -14,3 +14,21 @@ app.listen(3000, () => { //starts the server
 app.get('/recipes/new', (req,res) => {
     res.render('new');
 });
+
+app.use(express.urlencoded({ extended: true}));
+/*What this does: your form sends data in a format called "urlencoded" 
+(the standard format for regular HTML forms). 
+This line tells Express "expect that format, and make the values available to me on req.body." 
+Without this line, req.body would be undefined and you couldn't read what the user typed.*/
+
+app.post('/recipes', (req,res) => {
+    const {title, ingredients, instrustions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
+
+    const stmt = db.prepare(`
+        INSERT INTO recipes (title, ingredients, instructions, time_needed)
+        VALUE (?, ?, ?, ?)`
+    );
+    stmt.run(title, ingredients, instructions, time_needed);
+
+    res.redirect(`/`); //after saving, send the user's browser to the homepage instead of leaving them on the form
+});
