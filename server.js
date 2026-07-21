@@ -11,6 +11,6 @@ app.listen(3000, () => { //starts the server
     console.log('Server running at http://localhost:3000')
 });
 
-app.get('/recipe/new', (req,res) => {
+app.get('/recipes/new', (req,res) => {
     res.render('new');
 });
