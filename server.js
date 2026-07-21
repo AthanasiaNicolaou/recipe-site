@@ -4,7 +4,8 @@ const app = express(); //creates the "app"
 app.set('view engine', 'ejs'); //tells Express "when I ask you to render a page, use EJS to build it, and look for the templates in a views folder"
 
 app.get('/', (req, res) => { //app.get('/', ...) — this says: "when someone visits the homepage (/), run this function." The function takes two things: req (the incoming request — what the visitor asked for) and res (the response — what you send back).
-    res.render('index');
+    const recipes = db.prepare('SELECT * FROM recipes').all(); //.all() runs it and returns every matching row as a JavaScript array of objects (one object per recipe, each with .title, .ingredients, etc.)
+    res.render('index', { recipes: recipes}); //the second argument to render is how you pass data into the template. This makes a variable called recipes available inside index.ejs
 });
 
 app.listen(3000, () => { //starts the server
@@ -22,13 +23,13 @@ This line tells Express "expect that format, and make the values available to me
 Without this line, req.body would be undefined and you couldn't read what the user typed.*/
 
 app.post('/recipes', (req,res) => {
-    const {title, ingredients, instrustions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
+    const {title, ingredients, instructions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
 
     const stmt = db.prepare(`
         INSERT INTO recipes (title, ingredients, instructions, time_needed)
-        VALUE (?, ?, ?, ?)`
+        VALUES (?, ?, ?, ?)`
     );
     stmt.run(title, ingredients, instructions, time_needed);
 
-    res.redirect(`/`); //after saving, send the user's browser to the homepage instead of leaving them on the form
+    res.redirect('/'); //after saving, send the user's browser to the homepage instead of leaving them on the form
 });

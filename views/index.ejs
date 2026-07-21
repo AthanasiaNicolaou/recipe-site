@@ -5,7 +5,18 @@
         <title> My Recipe Site</title>
     </head>
     <body>
-        <h1>Welcome to my recipe site!</h1>
-        <p>This page for people to share their recipes.</p>
+        <h1>My Recipes</h1>
+        <a href="/recipes/new">+ Add a new recipe <!--href: (anchor/link) tag that says where the link goes | <a>...</a> — creates a clickable link. Whatever text/content is between the opening and closing tags is what the user sees and clicks (here, "+ Add a new recipe").--> </a>
+        <% recipes.forEach(function(recipe) { %><!--a JavaScript array method that runs the function once for each item in the array. Each time through, recipe refers to one recipe object (one row from the database).-->
+            <div>
+                <h2><%= recipe.title %></h2>
+                <p>Time needed: <%= recipe.time_needed %></p>
+            </div>
+        <%}); %>   
     </body>
 </html>
+
+<!-- 
+<% %> (no equals sign) — runs plain JavaScript logic, outputs nothing itself. Used here for the forEach loop structure.
+<%= %> (with equals sign) — runs JavaScript and inserts the result into the page as text. Used here to actually print recipe.title and recipe.time_needed.
+-->
