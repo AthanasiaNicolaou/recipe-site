@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Add a new Recipe</title>
+    </head>
+    <body>
+        <h1>Add a new Recipe</h1>
+        <form action="/recipes" method="POST"> <!--when submitted, the browser sends the form's data to /recipes using a POST request-->
+            <label>Title:<br />
+                <input type="text" name="title" required />
+            </label><br /><br /><!--one <br /> = "start a new line." Two in a row = "start a new line, then leave one line completely empty before continuing"-->
+
+            <label>Ingredients:<br />
+                <textarea name="ingredients" rows="6" required /> <!--It controls the visible height of the box — how many lines of text you can see without scrolling.-->
+            </label><br /><br />
+
+            <label>Instructions:<br />
+                <textarea name="instructions" rows="6" required /> <!--It controls the visible height of the box — how many lines of text you can see without scrolling.-->
+            </label><br /><br />
+
+            <label>Time needed:<br />
+                <input type="text" name="time_needed" /> <!--It controls the visible height of the box — how many lines of text you can see without scrolling.-->
+            </label><br /><br />
+
+            <button type="submit">Save recipe</button>
+        </form>
+    </body>
+</html>

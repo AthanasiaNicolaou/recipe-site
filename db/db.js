@@ -12,3 +12,5 @@ db.exec(`
     time_needed TEXT
     )
     `);
+
+    module.exports = db; //makes this db connection available to other files in the project, so server.js can require('./db/db') and use it.
