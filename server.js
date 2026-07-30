@@ -5,19 +5,6 @@ const app = express(); //creates the "app"
 const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs'); //tells Express "when I ask you to render a page, use EJS to build it, and look for the templates in a views folder"
 
-app.get('/', (req, res) => { //app.get('/', ...) — this says: "when someone visits the homepage (/), run this function." The function takes two things: req (the incoming request — what the visitor asked for) and res (the response — what you send back).
-    const recipes = db.prepare('SELECT * FROM recipes').all(); //.all() runs it and returns every matching row as a JavaScript array of objects (one object per recipe, each with .title, .ingredients, etc.)
-    res.render('index', { recipes: recipes}); //the second argument to render is how you pass data into the template. This makes a variable called recipes available inside index.ejs
-});
-
-app.listen(3000, () => { //starts the server
-    console.log('Server running at http://localhost:3000')
-});
-
-app.get('/recipes/new', (req,res) => {
-    res.render('new');
-});
-
 app.use(express.urlencoded({ extended: true}));
 /*What this does: your form sends data in a format called "urlencoded" 
 (the standard format for regular HTML forms). 
@@ -32,6 +19,26 @@ app.use(session({
 /*What this does: this middleware gives every visitor a unique session, tracked via a cookie in their browser. 
 Once someone logs in, we'll store their user info inside req.session — and it'll persist across page loads because of this cookie, 
 without them needing to log in again on every single request.*/
+
+app.use((req, res, next) => {
+    if (req.session.userId) {
+        res.locals.currentUser = db.prepare('SELECT * FROM users WHERE id = ?').get(req.session.userId);
+    } else {
+        res.locals.currentUser = null;
+    }
+    next(); //Calling next() says "I'm done, continue on to whatever's supposed to handle this request next" (either the next middleware, or the actual matching route). If you forget to call next(), the request just hangs forever
+});
+/*res.locals — a special object where anything you put becomes automatically available inside every EJS template, without you needing to manually pass it via res.render('page', { ... }) each time.*/
+/*So altogether: on every request, we check if there's a userId in the session. If yes, look up that user's full info and stash it in res.locals.currentUser. If not, set it to null. Every template can now check currentUser freely.*/
+
+app.get('/', (req, res) => { //app.get('/', ...) — this says: "when someone visits the homepage (/), run this function." The function takes two things: req (the incoming request — what the visitor asked for) and res (the response — what you send back).
+    const recipes = db.prepare('SELECT * FROM recipes').all(); //.all() runs it and returns every matching row as a JavaScript array of objects (one object per recipe, each with .title, .ingredients, etc.)
+    res.render('index', { recipes: recipes}); //the second argument to render is how you pass data into the template. This makes a variable called recipes available inside index.ejs
+});
+
+app.get('/recipes/new', (req,res) => {
+    res.render('new');
+});
 
 app.post('/recipes', (req,res) => {
     const {title, ingredients, instructions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
@@ -94,4 +101,14 @@ app.post('/login', async (req, res) => {
 
     req.session.userId = user.id; //By storing user.id here, we're saying "this browser is now associated with this specific user." On every future request from this same browser, req.session.userId will still hold that value — that's how the server "remembers" who's logged in, without them re-entering credentials on every page.
     res.redirect('/');
+});
+
+app.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+});
+
+app.listen(3000, () => { //starts the server
+    console.log('Server running at http://localhost:3000')
 });
