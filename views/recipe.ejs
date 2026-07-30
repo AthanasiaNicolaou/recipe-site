@@ -14,14 +14,14 @@
 
         <h2>Ingredients</h2>
         <u1> <!--<ul> / <li> — an unordered (bulleted) list; each ingredient becomes one bullet point.-->
-            <% recipe.ingredients.split('/n').forEach(function(line) { %> 
+            <% recipe.ingredients.split('\n').forEach(function(line) { %> 
             <li><%= line %></li>
         <% }); %>
         </u1>
 
         <h2>Instructions</h2>
         <ol> <!--<ol> / <li> — an ordered (numbered) list; used for instructions since step order matters.-->
-            <% recipe.instructions.split('/n').forEach(funcrion(line) { %>
+            <% recipe.instructions.split('\n').forEach(function(line) { %>
             <li><%= line %></li>
         <% }); %>
         </ol>
