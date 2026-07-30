@@ -72,3 +72,26 @@ app.post('/signup', async (req, res) => { //Hashing a password with bcrypt isn't
 
     res.redirect('/login');
 });
+
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
+
+    if (!user) {
+        return res.send('No account with that email.');
+    }
+
+    const passwordMatches = await bcrypt.compare(password, user.password_hash);
+
+    if (!passwordMatches) {
+        return res.send('Incorrect password.');
+    }
+
+    req.session.userId = user.id; //By storing user.id here, we're saying "this browser is now associated with this specific user." On every future request from this same browser, req.session.userId will still hold that value — that's how the server "remembers" who's logged in, without them re-entering credentials on every page.
+    res.redirect('/');
+});
