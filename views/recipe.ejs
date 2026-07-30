@@ -7,6 +7,9 @@
     <body>
         <a href="/">&larr; Back to all recipes</a> <!--&larr; is an HTML entity — a special code you type in HTML source that the browser converts into a specific character/symbol when it displays the page. In this case, it renders as a left-pointing arrow: ← -->
         <h1><%= recipe.title %></h1>
+        <form action="/recipes/<%= recipe.id %>/delete" method="POST">
+            <button type="submit">Delete this recipe</button>
+        </form>
         <p>Time needed: <%= recipe.time_needed %></p>
 
         <h2>Ingredients</h2>

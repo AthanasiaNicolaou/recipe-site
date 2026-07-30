@@ -38,3 +38,8 @@ app.get('/recipes/:id', (req, res) => {
     const recipe = db.prepare(`SELECT * FROM recipes WHERE id = ?`).get(req.params.id) //req.params.id — this is how you read that captured value. If someone visits /recipes/3, then req.params.id equals "3"
     res.render('recipe', { recipe: recipe}); //1st recipe:key, 2nd recipe:value
 });
+
+app.post('/recipes/:id/delete', (req, res) => {
+    db.prepare('DELETE FROM recipes WHERE id = ?').run(req.params.id);
+    res.redirect('/');
+})
