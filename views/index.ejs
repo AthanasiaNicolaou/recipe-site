@@ -10,7 +10,9 @@
         <% recipes.forEach(function(recipe) { %><!--a JavaScript array method that runs the function once for each item in the array. Each time through, recipe refers to one recipe object (one row from the database).-->
             <div> <!--purpose: to be a generic container/box that groups other content together.-->
                 <h2><a href="/recipes/<%= recipe.id %>"><%= recipe.title %></a></h2> <!--Everything outside the <% %> tags is literal text, unchanged. Everything inside gets replaced with the actual value. So if this specific recipe's id is 3, EJS builds the final HTML as:href="/recipes/3"-->
+                <% if(recipe.time_needed) { %>
                 <p>Time needed: <%= recipe.time_needed %></p>
+                <% } %>
             </div>
         <%}); %>   
     </body>
