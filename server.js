@@ -103,7 +103,7 @@ app.post('/login', async (req, res) => {
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user) {
-        return res.send('No account with that email.');
+        return res.render('login-error');
     }
 
     const passwordMatches = await bcrypt.compare(password, user.password_hash);
