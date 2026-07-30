@@ -13,4 +13,13 @@ db.exec(`
     )
     `);
 
-    module.exports = db; //makes this db connection available to other files in the project, so server.js can require('./db/db') and use it.
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password_hash TEXT NOT NULL
+    )
+`);
+    
+module.exports = db; //makes this db connection available to other files in the project, so server.js can require('./db/db') and use it.

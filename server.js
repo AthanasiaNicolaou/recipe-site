@@ -1,5 +1,6 @@
 const db = require('./db/db');
 const express = require('express'); //pulls in the Express library
+const session = require('express-session');
 const app = express(); //creates the "app"
 app.set('view engine', 'ejs'); //tells Express "when I ask you to render a page, use EJS to build it, and look for the templates in a views folder"
 
@@ -21,6 +22,15 @@ app.use(express.urlencoded({ extended: true}));
 (the standard format for regular HTML forms). 
 This line tells Express "expect that format, and make the values available to me on req.body." 
 Without this line, req.body would be undefined and you couldn't read what the user typed.*/
+
+app.use(session({
+    secret: 'change-this-to-something-random-later', //make stronger later
+    resave: false,
+    saveUninitialized: false,
+}));
+/*What this does: this middleware gives every visitor a unique session, tracked via a cookie in their browser. 
+Once someone logs in, we'll store their user info inside req.session — and it'll persist across page loads because of this cookie, 
+without them needing to log in again on every single request.*/
 
 app.post('/recipes', (req,res) => {
     const {title, ingredients, instructions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
