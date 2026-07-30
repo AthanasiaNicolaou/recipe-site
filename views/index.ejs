@@ -9,7 +9,7 @@
         <a href="/recipes/new">+ Add a new recipe <!--href: (anchor/link) tag that says where the link goes | <a>...</a> — creates a clickable link. Whatever text/content is between the opening and closing tags is what the user sees and clicks (here, "+ Add a new recipe").--> </a>
         <% recipes.forEach(function(recipe) { %><!--a JavaScript array method that runs the function once for each item in the array. Each time through, recipe refers to one recipe object (one row from the database).-->
             <div> <!--purpose: to be a generic container/box that groups other content together.-->
-                <h2><a href="/recipes/<%= recipe.id %>"<%= recipe.title %></a></h2> <!--Everything outside the <% %> tags is literal text, unchanged. Everything inside gets replaced with the actual value. So if this specific recipe's id is 3, EJS builds the final HTML as:href="/recipes/3"-->
+                <h2><a href="/recipes/<%= recipe.id %>"><%= recipe.title %></a></h2> <!--Everything outside the <% %> tags is literal text, unchanged. Everything inside gets replaced with the actual value. So if this specific recipe's id is 3, EJS builds the final HTML as:href="/recipes/3"-->
                 <p>Time needed: <%= recipe.time_needed %></p>
             </div>
         <%}); %>   
