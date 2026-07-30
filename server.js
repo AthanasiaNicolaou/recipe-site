@@ -2,6 +2,7 @@ const db = require('./db/db');
 const express = require('express'); //pulls in the Express library
 const session = require('express-session');
 const app = express(); //creates the "app"
+const bcrypt = require('bcrypt');
 app.set('view engine', 'ejs'); //tells Express "when I ask you to render a page, use EJS to build it, and look for the templates in a views folder"
 
 app.get('/', (req, res) => { //app.get('/', ...) — this says: "when someone visits the homepage (/), run this function." The function takes two things: req (the incoming request — what the visitor asked for) and res (the response — what you send back).
@@ -53,3 +54,21 @@ app.post('/recipes/:id/delete', (req, res) => {
     db.prepare('DELETE FROM recipes WHERE id = ?').run(req.params.id);
     res.redirect('/');
 })
+
+app.get('/signup', (req, res) => {
+    res.render('signup'); //res.render('signup') tells Express: "find views/signup.ejs, turn it into plain HTML, and send that HTML back to whoever made this request."
+})
+
+app.post('/signup', async (req, res) => { //Hashing a password with bcrypt isn't instant — it's deliberately slow (a security feature, makes brute-force guessing harder). Because it takes real time, it's an asynchronous operation — JavaScript doesn't freeze and wait for it by default; instead you use async/await to say "pause this specific function here until this finishes, but don't block anything else on the server meanwhile."
+    const { username, email, password } = req.body;
+
+    const passwordHash = await bcrypt.hash(password, 10); //await pauses until the hash is ready
+
+    const stmt = db.prepare(`
+        INSERT INTO users (username, email, password_hash)
+        VALUES (?, ?, ?)
+    `);
+    stmt.run(username, email, passwordHash);
+
+    res.redirect('/login');
+});
