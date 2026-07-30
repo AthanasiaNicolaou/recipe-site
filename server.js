@@ -103,13 +103,13 @@ app.post('/login', async (req, res) => {
     const user = db.prepare('SELECT * FROM users WHERE email = ?').get(email);
 
     if (!user) {
-        return res.render('login-error');
+        return res.render('login-error', {message: "We couldn't find an account with that email"});
     }
 
     const passwordMatches = await bcrypt.compare(password, user.password_hash);
 
     if (!passwordMatches) {
-        return res.send('Incorrect password.');
+        return res.render('login-error', { message: 'Incorrect password. Please try again.'});
     }
 
     req.session.userId = user.id; //By storing user.id here, we're saying "this browser is now associated with this specific user." On every future request from this same browser, req.session.userId will still hold that value — that's how the server "remembers" who's logged in, without them re-entering credentials on every page.
