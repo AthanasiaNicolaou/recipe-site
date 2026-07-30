@@ -31,16 +31,29 @@ app.use((req, res, next) => {
 /*res.locals — a special object where anything you put becomes automatically available inside every EJS template, without you needing to manually pass it via res.render('page', { ... }) each time.*/
 /*So altogether: on every request, we check if there's a userId in the session. If yes, look up that user's full info and stash it in res.locals.currentUser. If not, set it to null. Every template can now check currentUser freely.*/
 
+function requireLogin(req, res, next) {
+    if (!res.locals.currentUser) {
+        return res.redirect('/login');
+    }
+    next();
+}
+/*
+unlike the currentUser middleware (which runs automatically on every request via app.use), 
+this one is written as a named function you'll manually attach to specific routes 
+— only the ones that should require login. If currentUser is null (nobody's logged in), 
+it redirects to /login and never calls next() — meaning the actual route never runs at all.
+*/
+
 app.get('/', (req, res) => { //app.get('/', ...) — this says: "when someone visits the homepage (/), run this function." The function takes two things: req (the incoming request — what the visitor asked for) and res (the response — what you send back).
     const recipes = db.prepare('SELECT * FROM recipes').all(); //.all() runs it and returns every matching row as a JavaScript array of objects (one object per recipe, each with .title, .ingredients, etc.)
     res.render('index', { recipes: recipes}); //the second argument to render is how you pass data into the template. This makes a variable called recipes available inside index.ejs
 });
 
-app.get('/recipes/new', (req,res) => {
+app.get('/recipes/new', requireLogin, (req,res) => {
     res.render('new');
 });
 
-app.post('/recipes', (req,res) => {
+app.post('/recipes', requireLogin, (req,res) => {
     const {title, ingredients, instructions, time_needed} = req.body; //req.body is an object holding whatever the user typed (thanks to that urlencoded line), with keys matching each input's name attribute from the form.
 
     const stmt = db.prepare(`
@@ -57,7 +70,7 @@ app.get('/recipes/:id', (req, res) => {
     res.render('recipe', { recipe: recipe}); //1st recipe:key, 2nd recipe:value
 });
 
-app.post('/recipes/:id/delete', (req, res) => {
+app.post('/recipes/:id/delete', requireLogin, (req, res) => {
     db.prepare('DELETE FROM recipes WHERE id = ?').run(req.params.id);
     res.redirect('/');
 })

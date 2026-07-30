@@ -6,6 +6,7 @@ const db = new Database('db/recipes.sqlite');
 db.exec(`
     CREATE TABLE IF NOT EXISTS recipes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
     title TEXT NOT NULL,
     ingredients TEXT NOT NULL,
     instructions TEXT NOT NULL,
