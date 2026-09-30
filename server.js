@@ -71,6 +71,12 @@ app.get('/recipes/:id', (req, res) => {
 });
 
 app.post('/recipes/:id/delete', requireLogin, (req, res) => {
+    const recipe = db.prepare('SELECT * FROM recipes WHERE id = ?').get(req.params.id);
+
+    if (recipe.user_id !== res.locals.currentUser.id) {
+        return res.send("you can't delete someone else's recipe."); //if the recipe's stored owner does not match whoever is currently logged in, never reach the actual DELETE
+    }
+
     db.prepare('DELETE FROM recipes WHERE id = ?').run(req.params.id);
     res.redirect('/');
 })
