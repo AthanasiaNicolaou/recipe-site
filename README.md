@@ -45,6 +45,19 @@ my-recipe-site/
 └── .gitignore
 ```
 
+## Running it locally
+ 
+**Requirements:** [Node.js](https://nodejs.org/) installed.
+ 
+```bash
+npm install
+node server.js
+```
+ 
+Then open **http://localhost:3000** in your browser.
+ 
+The database (`db/recipes.sqlite`) is created automatically the first time the server runs.
+
 ## What I learned building this
 
 - How a request actually travels from browser → Express route → database → back to the browser as HTML
